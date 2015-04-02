@@ -142,8 +142,10 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
         char ch;
 		while ((ch = is.get()) != '$')
 			text += ch;
+        string s;
+        getline(is, s);
         cout << endl << text << endl << endl;
-        is.setstate(ios::goodbit);
+        //is.setstate(ios::goodbit);
 	} else {
 		util::error("Error: Invalid format on create article command.");
 	}

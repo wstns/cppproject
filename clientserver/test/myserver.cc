@@ -37,6 +37,7 @@ void writeString(const shared_ptr<Connection>& conn, const string& s) {
 
 void listNewsgroups(MessageHandler &mess, Database &database)
 {
+    mess.receiveComEnd();
 	vector<Newsgroup> newsgroups = database.listNewsgroups();
 	mess.sendCode(Protocol::ANS_LIST_NG);
 	mess.sendIntParameter(newsgroups.size());
@@ -88,7 +89,7 @@ void listArticle(MessageHandler &mess, Database &database)
 {
     int ngID = mess.receiveIntParameter();
     if (mess.receiveCode() != Protocol::COM_END)
-        error("Error: Expected COM_END but received something else.");
+        util::error("Error: Expected COM_END but received something else.");
 
     mess.sendCode(Protocol::ANS_LIST_ART);
 
@@ -96,7 +97,7 @@ void listArticle(MessageHandler &mess, Database &database)
     int id = database.listArticles(ngID, vec);
     if (id == -1) { // Newsgroup not found.
         mess.sendCode(Protocol::ANS_NAK);
-        mess.sendCode(Protocol::ERR_NG_DOES_NOT_EXITS);
+        mess.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
     } else {
         mess.sendCode(Protocol::ANS_ACK);
 
@@ -168,7 +169,7 @@ void handleIt(MessageHandler &mess, Database &database)
 		break;
 	default:
 		cerr << "Invalid code command." << endl;
-		exit(EXIT_FAILURE);
+		//exit(EXIT_FAILURE);
 		break;
 	}
 }

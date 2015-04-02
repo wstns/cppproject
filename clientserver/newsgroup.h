@@ -19,11 +19,12 @@ public:
     /* Adds the article to the group. */
     void addArticle(Article article);
     void addArticle(const std::string &title, const std::string &author, const std::string &text);
-    /* Removes the article with the given ID. */
-    void removeArticle(util::id_type id);
+    /* Removes the article with the given ID. Returns -1 if element was not found, else returns id. */
+    int removeArticle(int id);
     std::string getTitle() const { return title; }
     const std::map<util::id_type, Article> *getArticles() const { return &articles; }
 	int getID() const { return id; }
+	Article getArticle(int artID, int &check) const;
 private:
     std::string title;
     std::map<int, Article> articles;

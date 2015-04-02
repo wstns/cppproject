@@ -4,6 +4,7 @@
 #include "connectionclosedexception.h"
 #include "protocol.h"
 #include "utility.h"
+#include "article.h"
 
 #include <iostream>
 #include <string>
@@ -142,9 +143,8 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
         char ch;
 		while ((ch = is.get()) != '$')
 			text += ch;
-        string s;
-        getline(is, s);
-        cout << endl << text << endl << endl;
+        //string s;
+        //getline(is, s);
         //is.setstate(ios::goodbit);
 	} else {
 		util::error("Error: Invalid format on create article command.");
@@ -160,13 +160,9 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
 	mess.sendStringParameter(text);
 	mess.sendCode(Protocol::COM_END);
 
-	cout << "hit" << endl;
-
 	int response = mess.receiveCode();
 	if (response != Protocol::ANS_CREATE_ART)
 		util::error("Error: Expected response ANS_CREATE_ART but received something else.");
-
-    cout << "hit också" << endl;
 
 	response = mess.receiveCode();
     switch (response) {
@@ -176,12 +172,11 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
         response = mess.receiveCode();
         if (response != Protocol::ERR_NG_DOES_NOT_EXIST)
             util::error("Error: Invalid response after ANS_NAK when creating article.");
+        cout << "Newsgroup " << ngID << " does not exist." << endl;
         break;
     default:
         util::error("Invalid response after code ANS_CREATE_ART.");
     }
-
-    cout << "Även hit" << endl;
 
     mess.receiveAnsEnd();
 }
@@ -203,10 +198,10 @@ void deleteNewsgroup(MessageHandler &mess, int id)
     case Protocol::ANS_NAK:
         if (mess.receiveCode() != Protocol::ERR_NG_DOES_NOT_EXIST)
             util::error("Expected response ERR_NG_DOES_NOT_EXIST after ANS_NAK but received something else.");
-        cout << "Newsgroup with ID " << id << " does not exits." << endl;
+        cout << "Newsgroup with ID " << id << " does not exist." << endl;
         break;
     default:
-        util::error("Error: Invalid code received after AND_DELETE_NG.");
+        util::error("Error: Invalid code received after ANS_DELETE_NG.");
         break;
     }
 
@@ -215,7 +210,70 @@ void deleteNewsgroup(MessageHandler &mess, int id)
 
 void deleteArticle(MessageHandler &mess, int ngID, int artID)
 {
-    mess.sendCode(Protocol::COM_DELETE_ART);
+	mess.sendCode(Protocol::COM_DELETE_ART);
+	mess.sendIntParameter(ngID);
+	mess.sendIntParameter(artID);
+	mess.sendCode(Protocol::COM_END);
+
+	if (mess.receiveCode() != Protocol::ANS_DELETE_ART)
+        	util::error("Error: Expected response ANS_DELETE_ART but received something else.");
+	
+	int code = mess.receiveCode();
+	switch (code) {
+	case Protocol::ANS_ACK:
+		break;
+	case Protocol::ANS_NAK:
+		code = mess.receiveCode();
+		if (code == Protocol::ERR_NG_DOES_NOT_EXIST)
+			cout << "Newsgroup with ID " << ngID << " does not exist." << endl;
+		else if (code == Protocol::ERR_ART_DOES_NOT_EXIST)
+			cout << "Article with ID " << artID << "in newsgroup with ID " << ngID << "does not exist." << endl;
+		else
+		        util::error("Error: Invalid code received after ANS_NAK.");
+		break;
+	default:
+		util::error("Error: Invalid code received after ANS_DELETE_ART.");
+        	break;
+	}
+
+	mess.receiveAnsEnd();
+}
+
+void getArticle(MessageHandler &mess, int ngID, int artID)
+{
+	mess.sendCode(Protocol::COM_GET_ART);
+	mess.sendIntParameter(ngID);
+	mess.sendIntParameter(artID);
+	mess.sendCode(Protocol::COM_END);
+
+	int code = mess.receiveCode();
+	if (code != Protocol::ANS_GET_ART)
+		util::error("Error: Expected ANS_GET_ART but received something else.");
+
+	code = mess.receiveCode();
+	string s1, s2, s3;
+	switch (code) {
+	case Protocol::ANS_ACK:
+		s1 = mess.receiveStringParameter();
+		s2 = mess.receiveStringParameter();
+		s3 = mess.receiveStringParameter();
+		Article(s1, s2, s3).print(cout) << endl;
+		break;
+	case Protocol::ANS_NAK:
+		code = mess.receiveCode();
+		if (code == Protocol::ERR_NG_DOES_NOT_EXIST)
+			cout << "Newsgroup with ID " << ngID << " does not exist." << endl;
+		else if (code == Protocol::ERR_ART_DOES_NOT_EXIST)
+			cout << "Article with ID " << artID << "in newsgroup with ID " << ngID << "does not exist." << endl;
+		else
+		        util::error("Error: Invalid code received after ANS_NAK.");
+		break;
+	default:
+		util::error("Error: Invalid code received after ANS_GET_ART.");
+		break;
+	}
+
+	mess.receiveAnsEnd();
 }
 
 void handleInput(MessageHandler &mess)
@@ -225,6 +283,8 @@ void handleInput(MessageHandler &mess)
 	string s;
 	istringstream iss(line);
 	iss >> s;
+
+	cout << endl;
 
 	if (s == "list") {
 		int id;
@@ -236,18 +296,24 @@ void handleInput(MessageHandler &mess)
 		iss >> s;
 		createNewsgroup(mess, s);
 	} else if (s == "delete") {
-        int id;
-        iss >> id;
-        deleteNewsgroup(mess, id);
+        	int id;
+        	iss >> id;
+        	deleteNewsgroup(mess, id);
 	} else if (s == "createa") {
-        int id;
-        iss >> id;
+        	int id;
+        	iss >> id;
 		createArticle(mess, cin, id);
 	} else if (s == "deletea") {
-        int ngID, artID;
-        iss >> ngID >> artID;
-        deleteArticle(mess, ngID, artID);
+        	int ngID, artID;
+        	iss >> ngID >> artID;
+        	deleteArticle(mess, ngID, artID);
+	} else if (s == "get") {
+		int ngID, artID;
+		iss >> ngID >> artID;
+		getArticle(mess, ngID, artID);
 	}
+
+	cout << endl;
 }
 
 int main(int argc, char* argv[]) {

@@ -85,7 +85,7 @@ void deleteNewsgroup(MessageHandler &mess, Database &database)
     mess.sendCode(Protocol::ANS_END);
 }
 
-void listArticle(MessageHandler &mess, Database &database)
+void listArticles(MessageHandler &mess, Database &database)
 {
     int ngID = mess.receiveIntParameter();
     if (mess.receiveCode() != Protocol::COM_END)
@@ -100,8 +100,14 @@ void listArticle(MessageHandler &mess, Database &database)
         mess.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
     } else {
         mess.sendCode(Protocol::ANS_ACK);
-
+        mess.sendIntParameter(vec.size());
+        for (const pair<int, Article> &p : vec) {
+            mess.sendIntParameter(p.first);
+            mess.sendStringParameter(p.second.getTitle());
+        }
     }
+
+    mess.sendCode(Protocol::ANS_END);
 }
 
 void createArticle(MessageHandler &mess, Database &database)
@@ -109,15 +115,11 @@ void createArticle(MessageHandler &mess, Database &database)
 	int ngID;
 	string title, author, text;
 
-	cout << "hit? (server)" << endl;
-
     ngID = mess.receiveIntParameter();
     title = mess.receiveStringParameter();
     author = mess.receiveStringParameter();
     text = mess.receiveStringParameter();
     mess.receiveComEnd();
-
-    cout << "hit (server)" << endl;
 
     ngID = database.addArticle(ngID, title, author, text);
     mess.sendCode(Protocol::ANS_CREATE_ART);
@@ -133,12 +135,56 @@ void createArticle(MessageHandler &mess, Database &database)
 
 void deleteArticle(MessageHandler &mess, Database &database)
 {
-	cout << __func__ << endl;
+	int ngID = mess.receiveIntParameter();
+	int artID = mess.receiveIntParameter();
+	mess.receiveComEnd();
+	
+	mess.sendCode(Protocol::ANS_DELETE_ART);
+	int ret = database.deleteArticle(ngID, artID);
+	switch (ret) {
+	case -1:
+		mess.sendCode(Protocol::ANS_NAK);
+		mess.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+		break;
+	case -2:
+		mess.sendCode(Protocol::ANS_NAK);
+		mess.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
+		break;
+	default:
+		mess.sendCode(Protocol::ANS_ACK);
+		break;
+	}
+
+	mess.sendCode(Protocol::ANS_END);
 }
 
 void getArticle(MessageHandler &mess, Database &database)
 {
-	cout << __func__ << endl;
+	int ngID = mess.receiveIntParameter();
+	int artID = mess.receiveIntParameter();
+	mess.receiveComEnd();
+	
+	mess.sendCode(Protocol::ANS_GET_ART);
+	int check = 0;
+	Article art = database.getArticle(ngID, artID, check);
+	switch (check) {
+	case -1:
+		mess.sendCode(Protocol::ANS_NAK);
+		mess.sendCode(Protocol::ERR_NG_DOES_NOT_EXIST);
+		break;
+	case -2:
+		mess.sendCode(Protocol::ANS_NAK);
+		mess.sendCode(Protocol::ERR_ART_DOES_NOT_EXIST);
+		break;
+	default:
+		mess.sendCode(Protocol::ANS_ACK);
+		mess.sendStringParameter(art.getTitle());
+		mess.sendStringParameter(art.getAuthor());
+		mess.sendStringParameter(art.getText());
+		break;
+	}
+
+	mess.sendCode(Protocol::ANS_END);
 }
 
 void handleIt(MessageHandler &mess, Database &database)
@@ -156,7 +202,7 @@ void handleIt(MessageHandler &mess, Database &database)
 		deleteNewsgroup(mess, database);
 		break;
 	case Protocol::COM_LIST_ART:
-		listArticle(mess, database);
+		listArticles(mess, database);
 		break;
 	case Protocol::COM_CREATE_ART:
 		createArticle(mess, database);

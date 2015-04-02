@@ -9,23 +9,17 @@ class Article {
 public:
     Article() = default;
     /* Constructs an article with the given title, author and text. */
-    Article(std::string tit, std::string auth, std::string txt) : title(tit), author(auth), text(txt) {}
+    Article(const std::string &tit, const std::string &auth, const std::string &txt) : title(tit), author(auth), text(txt) {}
     /* Prints the title and author on one row, followed by the text on the next row. */
-    friend std::ostream &operator<<(std::ostream &os, const Article &article);
+    std::ostream &print(std::ostream &os) { return os << title << '\t' << "From: " << author << '\n' << text; }
     std::string getTitle() const { return title; }
     std::string getAuthor() const { return author; }
+	std::string getText() const { return text; }
 private:
     std::string title;
     std::string author;
     std::string text;
 };
-
-#if 0
-std::ostream &operator<<(std::ostream &os, const Article &article)
-{
-    return os << article.title << '\t' << "From: " << article.author << '\n' << article.text;
-}
-#endif
 
 
 #endif /* ARTICLE_H */

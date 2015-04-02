@@ -40,7 +40,8 @@
 
 bool Connection::ignoresPipeSignals = false;
 
-Connection::Connection(const char* host, int port) {
+Connection::Connection(const char* host, int port) : mess(*this) {
+
 	/*
 	 * Ignore SIGPIPE signals (broken pipe). A broken pipe (only?)
 	 * occurs in a client, when it tries to write to a dead server.
@@ -52,13 +53,13 @@ Connection::Connection(const char* host, int port) {
 		signal(SIGPIPE, SIG_IGN);
 		ignoresPipeSignals = true;
 	}
-	
+
 	my_socket = socket(AF_INET,SOCK_STREAM, 0);
 	if (my_socket < 0) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	sockaddr_in server;
 	server.sin_family = AF_INET;
 	hostent* hp = gethostbyname(host);
@@ -66,7 +67,7 @@ Connection::Connection(const char* host, int port) {
 		my_socket = -1;
 		return;
 	}
-	
+
 	memcpy(reinterpret_cast<char*>(&server.sin_addr),
 		   reinterpret_cast<char*>(hp->h_addr),
 		   hp->h_length);
@@ -78,7 +79,7 @@ Connection::Connection(const char* host, int port) {
 	}
 }
 
-Connection::Connection() {
+Connection::Connection() : mess(*this) {
 	/*
 	 * See previous constructor for comments.
 	 */

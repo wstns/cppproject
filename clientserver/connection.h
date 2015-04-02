@@ -26,6 +26,8 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "messagehandler.h"
+
 class Server;
 
 /* A Connection object represents a connection (a socket)  */
@@ -51,6 +53,8 @@ public:
 	
 	/* Reads a character */
 	unsigned char read() const;
+
+	MessageHandler &getMessageHandler() { return mess; }
 	
 	/* Connection cannot be copied */
 	Connection(const Connection&) = delete;
@@ -71,6 +75,8 @@ protected:
 	
 	/* Prints error message and exits */
 	void error(const char* msg) const;
+
+	MessageHandler mess;
 };
 
 #endif

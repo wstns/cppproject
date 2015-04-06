@@ -4,44 +4,56 @@
 #include <utility>
 #include <unistd.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 using namespace std;
 
-FileSystemDatabase::FileSystemDatabase(string rootDirectoryPath){
-	rootDirectory = rootDirectoryPath;
-	try{
-		string cmd = "mkdir " + rootDirectoryPath;
-		system(cmd.c_str());
-	}catch(std::exception everything){
-		//ignore dis bitch
-	}
+FileSystemDatabase::FileSystemDatabase(string root_dir) {
+	root_dir_path = root_dir;
+	string cmd = "mkdir " + root_dir_path;
+	system(cmd.c_str());
 }
 
 void FileSystemDatabase::addNewsgroup(Newsgroup ng){
-	string ng_path = rootDirectory+"/"+to_string(ng.getID());
-	vector<string> cmds;
-	cmds.push_back("mkdir " + ng_path);
-	cmds.push_back("touch " + ng_path+"/title:" + ng.getTitle());
+	string ng_path = root_dir_path+"/"+to_string(ng.getID());
+	string cmd = "mkdir " + ng_path;
+	system(cmd.c_str());
+	cmd = "touch " + ng_path+"/title:" + ng.getTitle();
+	system(cmd.c_str());
+
 	auto articles = ng.getArticles();
 	for(auto i = articles->begin(); i != articles->end(); i++) {
 		auto article = i->second;
 		string a_path = ng_path + "/" + to_string(i->first);
-		cmds.push_back("touch " + a_path);
 
-		//todo: use fopen...
-		cmds.push_back(article.getTitle()+";"+article.getAuthor() + "\\n" + " > " + a_path);
-		cmds.push_back(article.getText() + " > " + a_path);
+		FILE *a_file;
+		a_file = fopen(a_path.c_str(), "w");
+		if(a_file){
+			string contents = article.getTitle()+";"+article.getAuthor() + "\n" + article.getText();
+			fputs(contents.c_str(), a_file);
+			fclose(a_file);
+		}
 	}
-	for(auto c : cmds) system(c.c_str());
 }
 
 int FileSystemDatabase::removeNewsgroup(int id){
-	string ng = rootDirectory+"/"+to_string(id);
+	string ng = root_dir_path+"/"+to_string(id);
 	string cmd = "rm -rf " + ng;
 	system(cmd.c_str());
 }
 
 const std::vector<Newsgroup> *FileSystemDatabase::getNewsgroups() const{
+	vector<Newsgroup> ngs;
+	DIR *root = opendir(root_dir_path.c_str());
+	struct dirent *cur;
+	while(cur = readdir(root)){
+		cout<<cur->d_name;
+	}
+}
+
+Newsgroup readNewsgroup(int id){
 
 }
 

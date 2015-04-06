@@ -7,7 +7,7 @@
 
 class FileSystemDatabase : public Database {
 public:
-	FileSystemDatabase(std::string rootDirectoryPath);
+	FileSystemDatabase(std::string root_dir);
 
 	void addNewsgroup(Newsgroup ng) override;
   int removeNewsgroup(int id) override;
@@ -23,7 +23,7 @@ public:
   const std::vector<Newsgroup> *getNewsgroups() const;
 private:
     std::vector<Newsgroup> newsgroups;
-		std::string rootDirectory;
+		std::string root_dir_path;
 };
 
 #endif /* FILE_SYSTEM_DATABASE_H */

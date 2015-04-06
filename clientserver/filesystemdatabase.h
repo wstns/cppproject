@@ -7,9 +7,10 @@
 
 class FileSystemDatabase : public Database {
 public:
-	FileDatabase(string file);
-    void addNewsgroup(Newsgroup ng) override;
-    int removeNewsgroup(int id) override;
+	FileSystemDatabase(std::string rootDirectoryPath);
+
+	void addNewsgroup(Newsgroup ng) override;
+  int removeNewsgroup(int id) override;
 	/* Returns -1 if name is not found. */
 	int findNewsgroup(const std::string &name) override;
 	std::vector<Newsgroup> listNewsgroups() override;
@@ -19,10 +20,10 @@ public:
 	int deleteArticle(int ngID, int artID) override;
 	Article getArticle(int ngID, int artID, int &check) override;
 
-    const std::vector<Newsgroup> *getNewsgroups() const;
+  const std::vector<Newsgroup> *getNewsgroups() const;
 private:
-	string datafile
     std::vector<Newsgroup> newsgroups;
+		std::string rootDirectory;
 };
 
 #endif /* FILE_SYSTEM_DATABASE_H */

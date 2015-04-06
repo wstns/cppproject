@@ -25,7 +25,7 @@
 
 #include "server.h"
 #include "connection.h"
-
+#include "filesystemdatabase.h"
 #include <memory>
 #include <iostream>
 #include <algorithm>
@@ -37,7 +37,8 @@
 #include <netinet/in.h>	 /* sockaddr_in */
 
 Server::Server(int port) {
-	database = std::unique_ptr<Database>(new InMemoryDatabase());
+	// database = std::unique_ptr<Database>(new InMemoryDatabase());
+	database = std::unique_ptr<Database>(new FileSystemDatabase("db"));
 
 	pending_socket = -1;
 

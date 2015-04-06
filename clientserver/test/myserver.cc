@@ -138,7 +138,7 @@ void deleteArticle(MessageHandler &mess, Database &database)
 	int ngID = mess.receiveIntParameter();
 	int artID = mess.receiveIntParameter();
 	mess.receiveComEnd();
-	
+
 	mess.sendCode(Protocol::ANS_DELETE_ART);
 	int ret = database.deleteArticle(ngID, artID);
 	switch (ret) {
@@ -163,7 +163,7 @@ void getArticle(MessageHandler &mess, Database &database)
 	int ngID = mess.receiveIntParameter();
 	int artID = mess.receiveIntParameter();
 	mess.receiveComEnd();
-	
+
 	mess.sendCode(Protocol::ANS_GET_ART);
 	int check = 0;
 	Article art = database.getArticle(ngID, artID, check);

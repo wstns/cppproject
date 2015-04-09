@@ -2,7 +2,7 @@
 \usepackage[utf8]{inputenc}
 
 \title{EDA031 - News Project}
-\author{Emil Westenius, Erik Westenius, Niklas Ovnell \& Johan Holm }
+\author{Emil Westenius, Erik Westenius, Niklas Ovnell \& Johan Holm (email) }
 \date{April 2015}
 
 \begin{document}
@@ -10,21 +10,35 @@
 \maketitle
 \pagebreak
 \section{Introduction}
+The objective of this project is to implement a news server and news client. The server contains a database with newsgroups and articles. A user connects to the server using the client. The client has a text-based user interface which allows users to create and delete news groups and articles. 
+
+\section{tillfälligt}
 OBS\hfill\\
 "Create a directory username (i.e., your own username) with subdirectories src and bin.
 Collect all source files in the src directory and write a makefile. make all should create the
 executables (the two versions of the server and the client), make install should copy the
-executables to the bin directory."
+executables to the bin directory."\hfill\\
+Kul sak jag nyss hittade i sharelatex: ctrl + alt + piltangenter för att sätta markörer på flera rader samtidigt (op!). Esc för att avbryta.
+
+Om någon lägger till grejer i mappen utifrån klienten kaosar allt
 
 \section{Requirements}
-Kul sak jag nyss hittade i sharelatex: ctrl + alt + piltangenter för att sätta markörer på flera rader samtidigt (op!). Esc för att avbryta.
+% lägga i conclusion istället?
+\begin{itemize}
+\item Each newsgroup has a unique name and a unique ID greater than zero.
+\item Each article has a title, an author, a text and a unique ID greater than zero.
+\item Newsgroup and article IDs cannot be reused. 
+\end{itemize}
+
 \section{System Design}
 % UML-figurer
 
 \section{Classes}
 \subsection{\texttt{Server}}
+The server listens to a port and handles multiple connections.
 
 \subsection{\texttt{Connection}}
+Used to connect the server with the client. 
 
 \subsection{\texttt{MessageHandler}}
 Uses \texttt{protocol.h} to decode and encode messages.
@@ -42,16 +56,15 @@ Database interface. Contains member functions for creation, deletion and listing
 This database handles everything in the primary memory and is initiated from scratch every time the user starts a server.
 
 \subsection{\texttt{FileSystemDatabase}}
-This database uses a file system to store news groups and articles between runs.
-
-% folder and file structure
-% meta file
+This database uses a file system to store news groups and articles between runs. Newsgroups are represented by folders named after newsgroup ID. Each folder contains a meta file with the folder name and the ID that the next created article will get. A newsgroup folder also contains one file for each article. These files are named after the article IDs and contain title, author and article text. 
 
 \subsection{\texttt{Newsgroup}}
 A newsgroup is identified by a unique name and ID number. It may contain any number of articles.
 
 \subsection{\texttt{Article}}
 An article is identified by a unique ID number. Each article has a title and an author and contains a text with the contents of the article. % fult?
+
+\section{Conclusion}
 
 
 \end{document}

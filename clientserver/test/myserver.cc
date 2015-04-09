@@ -243,14 +243,14 @@ int main(int argc, char* argv[]){
 	}
 
 	shared_ptr<Database> database = server.getDatabase();
-	Newsgroup ng1("Hej");
-	ng1.addArticle("C++", "Bjarne", "C++ is the shit");
-	ng1.addArticle("C", "Dennis", "C > C++ yo");
-	Newsgroup ng2("San");
-	ng2.addArticle("abc", "baba", "sodghodkfhjo");
-	ng2.addArticle("def", "sgu", "hdiughsduifgh");
-	database->addNewsgroup(ng1);
-	database->addNewsgroup(ng2);
+	// Newsgroup ng1("Hej");
+	// ng1.addArticle("C++", "Bjarne", "C++ is the shit");
+	// ng1.addArticle("C", "Dennis", "C > C++ yo");
+	// Newsgroup ng2("San");
+	// ng2.addArticle("abc", "baba", "sodghodkfhjo");
+	// ng2.addArticle("def", "sgu", "hdiughsduifgh");
+	// database->addNewsgroup(ng1);
+	// database->addNewsgroup(ng2);
 
 	while (true) {
 		auto conn = server.waitForActivity();

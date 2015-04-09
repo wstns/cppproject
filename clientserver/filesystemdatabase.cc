@@ -1,11 +1,13 @@
 #include "filesystemdatabase.h"
 #include "article.h"
+#include "newsgroup.h"
 #include <algorithm>
 #include <utility>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <dirent.h>
 #include <fstream>
 
@@ -13,28 +15,60 @@ using namespace std;
 
 FileSystemDatabase::FileSystemDatabase(string root_dir_path) {
 	root_dir = root_dir_path;
-	string cmd = "mkdir " + root_dir_path;
-	system(cmd.c_str());
+	struct stat statbuf;
+	if (stat(root_dir.c_str(), &statbuf) != -1) { 	//checking status on root_dir
+   		if (S_ISDIR(statbuf.st_mode)) {				//checking if it was a directory
+   			cout<<"db finns redan"<<endl;
+			ifstream ng_meta_file;
+			int nextID;
+			ng_meta_file.open(root_dir+"/meta");
+			ng_meta_file >> nextID;
+			Newsgroup::setNextNewsgroupID(nextID);
+		}
+	}else {
+   		string cmd = "mkdir " + root_dir_path;
+		system(cmd.c_str());	
+		cmd = "touch meta";
+		string ng_meta_path = root_dir_path+"/meta";
+		ofstream out_ng_meta_file(ng_meta_path);
+		out_meta_file <<"1";
+		out_meta_file.close(); 
+	}
 }
 
 void FileSystemDatabase::addNewsgroup(Newsgroup ng){
 	string ng_path = root_dir+"/"+to_string(ng.getID());
 	string cmd = "mkdir " + ng_path;
 	system(cmd.c_str());
+	//increment next newsgroup id in metafile.
+	string ng_meta_path = root_dir_path+"/meta";
+	ifstream ng_meta_file(ng_meta_path);
+	string nextID;
+	ng_meta_file >> nextID;
+	ng_meta_file.close()
+	ofstream out_ng_meta_file(ng_meta_path);
+	out_ng_meta_file << nextID+1;
+	out_ng_meta_file.close()
+
+	//creating meta_file for ng
 
 	ofstream meta_file(ng_path+"/meta");
 	meta_file<<"0"<<endl<<ng.getTitle()<<endl;
 	meta_file.close();
 
-	for(auto a : *ng.getArticles()){
+	for(auto a : *ng.getArticles()){ //vad e detta?? lägger vi in artiklar från en ng som vi precis skapat??
 		Article article = a.second;
 		addArticle(ng.getID(), article.getTitle(), article.getAuthor(), article.getText());
 	}
 }
 
 int FileSystemDatabase::removeNewsgroup(int id){
-	string ng = root_dir+"/"+to_string(id);
-	string cmd = "rm -rf " + ng;
+	string ng_path = root_dir+"/"+to_string(id);
+	
+	//kan l'gga till h'r så att om vi tar bort det högsta idt så updaterar vi nästa id? men då måste vi
+	//räkna alla ifall de tidigare också tagits bort. kanske är oödigt??
+
+	string cmd = "rm -rf " + ng_path;
 	system(cmd.c_str());
 
 	return id; //todo: wät?

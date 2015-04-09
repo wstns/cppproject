@@ -10,7 +10,7 @@ public:
 	FileSystemDatabase(std::string root_dir_path);
 
 	void addNewsgroup(Newsgroup ng) override;
-  int removeNewsgroup(int id) override;
+  	int removeNewsgroup(int id) override;
 	/* Returns -1 if name is not found. */
 	int findNewsgroup(const std::string &name) override;
 	std::vector<Newsgroup> listNewsgroups() override;

@@ -70,8 +70,7 @@ void createNewsgroup(MessageHandler &mess, Database &database)
 void deleteNewsgroup(MessageHandler &mess, Database &database)
 {
     int ngID = mess.receiveIntParameter();
-    if (mess.receiveCode() != Protocol::COM_END)
-        util::error("Error: Expected COM_END but received something else.");
+    mess.receiveComEnd();
 
     mess.sendCode(Protocol::ANS_DELETE_NG);
     int removed = database.removeNewsgroup(ngID);
@@ -81,15 +80,13 @@ void deleteNewsgroup(MessageHandler &mess, Database &database)
     } else {
         mess.sendCode(Protocol::ANS_ACK);
     }
-
     mess.sendCode(Protocol::ANS_END);
 }
 
 void listArticles(MessageHandler &mess, Database &database)
 {
     int ngID = mess.receiveIntParameter();
-    if (mess.receiveCode() != Protocol::COM_END)
-        util::error("Error: Expected COM_END but received something else.");
+    mess.receiveComEnd();
 
     mess.sendCode(Protocol::ANS_LIST_ART);
 
@@ -236,22 +233,13 @@ int main(int argc, char* argv[]){
 		exit(1);
 	}
 
-	Server server(port);
+	Server server(port, IN_MEMORY_DATABASE);
 	if (!server.isReady()) {
 		cerr << "Server initialization error." << endl;
 		exit(1);
 	}
 
 	shared_ptr<Database> database = server.getDatabase();
-	// Newsgroup ng1("Hej");
-	// ng1.addArticle("C++", "Bjarne", "C++ is the shit");
-	// ng1.addArticle("C", "Dennis", "C > C++ yo");
-	// Newsgroup ng2("San");
-	// ng2.addArticle("abc", "baba", "sodghodkfhjo");
-	// ng2.addArticle("def", "sgu", "hdiughsduifgh");
-	// database->addNewsgroup(ng1);
-	// database->addNewsgroup(ng2);
-
 	while (true) {
 		auto conn = server.waitForActivity();
 		if (conn != nullptr) {

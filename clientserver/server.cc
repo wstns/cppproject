@@ -36,9 +36,14 @@
 #include <sys/time.h>	 /* select() */
 #include <netinet/in.h>	 /* sockaddr_in */
 
-Server::Server(int port) {
-	// database = std::unique_ptr<Database>(new InMemoryDatabase());
-	database = std::unique_ptr<Database>(new FileSystemDatabase("db"));
+Server::Server(int port, database_type choice) {
+	if(choice == IN_MEMORY_DATABASE){
+		database = std::unique_ptr<Database>(new InMemoryDatabase());	
+	}else if(choice == FILE_SYSTEM_DATABASE){
+		database = std::unique_ptr<Database>(new FileSystemDatabase("db"));	
+	}else{
+		std::cout<<"You done bad, nothing works now"<<std::endl;
+	}
 
 	pending_socket = -1;
 

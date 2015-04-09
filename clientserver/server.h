@@ -31,12 +31,15 @@
 #include "inmemorydatabase.h"
 #include <vector>
 #include <memory>
+enum database_type {
+	IN_MEMORY_DATABASE, FILE_SYSTEM_DATABASE
+};
 
 /* A server listens to a port and handles multiple connections */
 class Server {
 public:
 	/* Creates a server that listens to a port */
-	explicit Server(int port);
+	explicit Server(int port, database_type choice);
 
 	/* Removes all registered connections */
 	virtual ~Server();

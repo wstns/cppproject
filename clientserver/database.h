@@ -10,8 +10,9 @@
 class Database {
 public:
 	virtual ~Database() = default;
-	virtual void addNewsgroup(Newsgroup ng) = 0;
-	virtual void addNewsgroup(const std::string &name) = 0;
+	/* Returns -1 if ng already exists. */
+	virtual int addNewsgroup(Newsgroup ng) = 0;
+	virtual int addNewsgroup(const std::string &name) = 0;
 	/* Returns the ID of the newsgroup removed, or -1 if it wasn't found. */
 	virtual int removeNewsgroup(util::id_type id) = 0;
 	/* Returns the ID of the newsgroup with the given name, or -1 if not found. */

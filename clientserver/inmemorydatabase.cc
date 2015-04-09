@@ -3,10 +3,14 @@
 #include <algorithm>
 #include <utility>
 
-void InMemoryDatabase::addNewsgroup(Newsgroup ng)
+int InMemoryDatabase::addNewsgroup(Newsgroup ng)
 {
+	if (findNewsgroup(ng.getTitle()) != -1) { // A newsgroup with that name already exists.
+		return -1;
+	}
 	auto it = std::lower_bound(newsgroups.begin(), newsgroups.end(), ng);
 	newsgroups.insert(it, ng);
+	return ng.getID();
 }
 
 int InMemoryDatabase::removeNewsgroup(int id)

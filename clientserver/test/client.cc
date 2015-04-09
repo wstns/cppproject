@@ -1,4 +1,4 @@
-/* myclient.cc: sample client program */
+
 #include "connection.h"
 #include "messagehandler.h"
 #include "connectionclosedexception.h"
@@ -15,32 +15,6 @@
 #include <utility>
 
 using namespace std;
-
-#if 0
-
-/*
- * Send an integer to the server as four bytes.
- */
-void writeNumber(const Connection& conn, int value) {
-	conn.write((value >> 24) & 0xFF);
-	conn.write((value >> 16) & 0xFF);
-	conn.write((value >> 8)	 & 0xFF);
-	conn.write(value & 0xFF);
-}
-
-/*
- * Read a string from the server.
- */
-string readString(const Connection& conn) {
-	string s;
-	char ch;
-	while ((ch = conn.read()) != '$') {
-		s += ch;
-	}
-	return s;
-}
-
-#endif /* if 0 */
 
 void printStartMessage(ostream &os)
 {
@@ -66,11 +40,14 @@ void listNewsgroups(MessageHandler &mess)
 	if (num < 0) {
 		util::error("Error: Negative amount of newsgroups.");
 	}
-
-	for (int i = 0; i != num; ++i) {
-		int id = mess.receiveIntParameter();
-		string ngName = mess.receiveStringParameter();
-		cout << id << '\t' << ngName << endl;
+	if(num==0){
+		cout<<"There are no newsgroups, make one!"<<endl;
+	}else{
+		for (int i = 0; i != num; ++i) {
+			int id = mess.receiveIntParameter();
+			string ngName = mess.receiveStringParameter();
+			cout << id << '\t' << ngName << endl;
+		}
 	}
 
 	mess.receiveAnsEnd();
@@ -81,11 +58,14 @@ void printArticleList(MessageHandler &mess)
 	int num = mess.receiveIntParameter();
 	if (num < 0)
 		util::error("Error: Negative amount of articles in newsgroup.");
-
-	for (int i = 0; i != num; ++i) {
-		int id = mess.receiveIntParameter();
-		string artName = mess.receiveStringParameter();
-		cout << id << '\t' << artName << endl;
+	if(num == 0){
+		cout<<"No articles in the newsgroup"<<endl;
+	}else{
+		for (int i = 0; i != num; ++i) {
+			int id = mess.receiveIntParameter();
+			string artName = mess.receiveStringParameter();
+			cout << id << '\t' << artName << endl;
+		}
 	}
 }
 
@@ -108,7 +88,7 @@ void listArticlesInNewsgroup(MessageHandler &mess, int id)
 		response = mess.receiveCode();
 		if (response != Protocol::ERR_NG_DOES_NOT_EXIST)
 			util::error("Error: Invalid response received after ANS_NAK to list articles.");
-		cout << "No articles." << endl;
+		cout << "Newsgroup does not exist." << endl;
 		break;
 	}
 
@@ -130,6 +110,7 @@ void createNewsgroup(MessageHandler &mess, const string &s)
 		response = mess.receiveCode();
 		if (response != Protocol::ERR_NG_ALREADY_EXISTS)
 			util::error("Error: Invalid response received after ANS_NAK to create newsgroup.");
+		cout<<"Newsgroup already exists"<<endl;
 	}
 
 	mess.receiveAnsEnd();
@@ -143,9 +124,6 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
         char ch;
 		while ((ch = is.get()) != '$')
 			text += ch;
-        //string s;
-        //getline(is, s);
-        //is.setstate(ios::goodbit);
 	} else {
 		util::error("Error: Invalid format on create article command.");
 	}
@@ -194,6 +172,7 @@ void deleteNewsgroup(MessageHandler &mess, int id)
     response = mess.receiveCode();
     switch (response) {
     case Protocol::ANS_ACK:
+    	cout<<"Deleted"<<endl;
         break;
     case Protocol::ANS_NAK:
         if (mess.receiveCode() != Protocol::ERR_NG_DOES_NOT_EXIST)
@@ -204,7 +183,6 @@ void deleteNewsgroup(MessageHandler &mess, int id)
         util::error("Error: Invalid code received after ANS_DELETE_NG.");
         break;
     }
-
     mess.receiveAnsEnd();
 }
 
@@ -221,6 +199,7 @@ void deleteArticle(MessageHandler &mess, int ngID, int artID)
 	int code = mess.receiveCode();
 	switch (code) {
 	case Protocol::ANS_ACK:
+		cout<<"Deleted"<<endl;
 		break;
 	case Protocol::ANS_NAK:
 		code = mess.receiveCode();
@@ -233,7 +212,7 @@ void deleteArticle(MessageHandler &mess, int ngID, int artID)
 		break;
 	default:
 		util::error("Error: Invalid code received after ANS_DELETE_ART.");
-        	break;
+        break;
 	}
 
 	mess.receiveAnsEnd();
@@ -284,14 +263,23 @@ void handleInput(MessageHandler &mess)
 	istringstream iss(line);
 	iss >> s;
 
-	cout << endl;
-
 	if (s == "list") {
 		int id;
-		if (iss >> id)	// If the user supplied a number.
-			listArticlesInNewsgroup(mess, id);
-		else	// No newsgroup was given, list the newsgroups.
+		if (iss >> s) {	// If the user supplied a number.
+			try {
+				id = stoi(s);
+			} catch (exception &) {
+				cout << "Invalid input" << endl;
+				return;
+			}
+			if(iss >> s){
+				cout<<"Too many arguments"<<endl;
+			}else{
+				listArticlesInNewsgroup(mess, id);
+			}
+		} else{	// No newsgroup was given, list the newsgroups.
 			listNewsgroups(mess);
+		}
 	} else if (s == "create") {
 		iss >> s;
 		createNewsgroup(mess, s);
@@ -309,11 +297,18 @@ void handleInput(MessageHandler &mess)
         	deleteArticle(mess, ngID, artID);
 	} else if (s == "get") {
 		int ngID, artID;
-		iss >> ngID >> artID;
-		getArticle(mess, ngID, artID);
-	}
+		if(iss >> ngID >> artID) {
+			if(iss >> s){
+				cout<<"Too many arguments"<<endl;
+			}else{
+				getArticle(mess, ngID, artID);	
+			}
+		}
+		else
+			cout << "Invalid input" << endl;
+	}else
+		cout<<"Not a valid command"<<endl;
 
-	cout << endl;
 }
 
 int main(int argc, char* argv[]) {

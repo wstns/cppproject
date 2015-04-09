@@ -4,3 +4,5 @@
 *	id nr fixxa? börja på 1 för artiklar?
 *	ta reda på vilket nästa newsgroup ska ha i början.
 *	Myserver skickar addNewsgroup med en string som parameter men den tas emot som en newsgroup. därefter förs ng.getID(). förstår inte hur detta kna funka... Var kallas konstruktorn??
+* fixa så att grupper kan ha mellanrum i sig, och artiklar??
+* fixxa ej dublett av newsgroup i båda databaserna.

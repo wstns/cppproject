@@ -1,0 +1,57 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+
+\title{EDA031 - News Project}
+\author{Emil Westenius, Erik Westenius, Niklas Ovnell \& Johan Holm }
+\date{April 2015}
+
+\begin{document}
+
+\maketitle
+\pagebreak
+\section{Introduction}
+OBS\hfill\\
+"Create a directory username (i.e., your own username) with subdirectories src and bin.
+Collect all source files in the src directory and write a makefile. make all should create the
+executables (the two versions of the server and the client), make install should copy the
+executables to the bin directory."
+
+\section{Requirements}
+Kul sak jag nyss hittade i sharelatex: ctrl + alt + piltangenter för att sätta markörer på flera rader samtidigt (op!). Esc för att avbryta.
+\section{System Design}
+% UML-figurer
+
+\section{Classes}
+\subsection{\texttt{Server}}
+
+\subsection{\texttt{Connection}}
+
+\subsection{\texttt{MessageHandler}}
+Uses \texttt{protocol.h} to decode and encode messages.
+
+\subsection{\texttt{MyServer}}
+Main program for the server. Run by the user to start a server with a given host (hur vara formulera sig?) and port.
+
+\subsection{\texttt{MyClient}}
+Main program for the client. Run by the user to start a client that connects to a given port. 
+
+\subsection{\texttt{Database}}
+Database interface. Contains member functions for creation, deletion and listing of news groups and their articles. 
+
+\subsection{\texttt{InMemoryDatabase}}
+This database handles everything in the primary memory and is initiated from scratch every time the user starts a server.
+
+\subsection{\texttt{FileSystemDatabase}}
+This database uses a file system to store news groups and articles between runs.
+
+% folder and file structure
+% meta file
+
+\subsection{\texttt{Newsgroup}}
+A newsgroup is identified by a unique name and ID number. It may contain any number of articles.
+
+\subsection{\texttt{Article}}
+An article is identified by a unique ID number. Each article has a title and an author and contains a text with the contents of the article. % fult?
+
+
+\end{document}

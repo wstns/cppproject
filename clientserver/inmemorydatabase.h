@@ -8,8 +8,8 @@
 class InMemoryDatabase : public Database {
 public:
 	InMemoryDatabase() = default;
-    int addNewsgroup(Newsgroup ng) override;
-    int removeNewsgroup(int id) override;
+	int addNewsgroup(Newsgroup ng) override;
+	int removeNewsgroup(int id) override;
 	/* Returns -1 if name is not found. */
 	int findNewsgroup(const std::string &name) override;
 	std::vector<Newsgroup> listNewsgroups() override;
@@ -19,9 +19,9 @@ public:
 	int deleteArticle(int ngID, int artID) override;
 	Article getArticle(int ngID, int artID, int &check) override;
 
-    const std::vector<Newsgroup> *getNewsgroups() const;
+	const std::vector<Newsgroup> *getNewsgroups() const;
 private:
-    std::vector<Newsgroup> newsgroups;
+	std::vector<Newsgroup> newsgroups;
 };
 
 #endif /* IN_MEMORY_DATABASE_H */

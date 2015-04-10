@@ -20,13 +20,13 @@ public:
 	int deleteArticle(int ngID, int artID) override;
 	Article getArticle(int ngID, int artID, int &check) override;
 
-  const std::vector<Newsgroup> *getNewsgroups() const;
+	const std::vector<Newsgroup> *getNewsgroups() const;
 private:
-		int getAndIncrementNextArticleId(int ngID);
-		int findNewsgroup(int id);
-		std::vector<int> readDirectory(std::string dir_path);
-    	std::vector<Newsgroup> newsgroups;
-		std::string root_dir;
+	int getAndIncrementNextArticleId(int ngID);
+	int findNewsgroup(int id);
+	std::vector<int> readDirectory(std::string dir_path);
+    std::vector<Newsgroup> newsgroups;
+	std::string root_dir;
 };
 
 #endif /* FILE_SYSTEM_DATABASE_H */

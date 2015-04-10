@@ -17,14 +17,18 @@ CXXFLAGS += -g
 #CPPFLAGS =  -stdlib=libc++
 #CXXFLAGS += -stdlib=libc++
 
-all: testfiledatabase libclientserver.a
+TARGET  = testfiledatabase
+SOURCES = $(shell echo src/*.cc)
+OBJECTS = $(SOURCES:.c=.o)
+
+all: $(TARGET) libclientserver.a
 
 # Create the library; ranlib is for Darwin (OS X) and maybe other systems.
 # Doesn't seem to do any damage on other systems.
 
-testfiledatabase: article.o connection.o database.o filesystemdatabase.o inmemorydatabase.o messagehandler.o newsgroup.o server.o
+$(TARGET): $(OBJECTS)
 
-libclientserver.a: article.o connection.o database.o filesystemdatabase.o inmemorydatabase.o messagehandler.o newsgroup.o server.o
+libclientserver.a: article.o connection.o database.o filesystemdatabase.o inmemorydatabase.o messagehandler.o newsgroup.o server.o inmemoryserver.o filesystemserver.o
 	ar rv libclientserver.a  article.o connection.o database.o filesystemdatabase.o inmemorydatabase.o messagehandler.o newsgroup.o server.o
 	ranlib libclientserver.a
 
@@ -34,6 +38,11 @@ libclientserver.a: article.o connection.o database.o filesystemdatabase.o inmemo
 # Standard clean
 clean:
 	rm -f *.o libclientserver.a
+
+install:
+	cp ./src/filesystemserver ./bin
+	cp ./src/inmemoryserver ./bin
+	cp ./src/client ./bin
 
 # Generate dependencies in *.d files
 %.d: %.cc

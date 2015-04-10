@@ -18,7 +18,7 @@ FileSystemDatabase::FileSystemDatabase(string root_dir_path) {
 	struct stat statbuf;
 	if (stat(root_dir.c_str(), &statbuf) != -1) { 	//checking status on root_dir
    		if (S_ISDIR(statbuf.st_mode)) {				//checking if it was a directory
-   			cout<<"Databasmap finns redan"<<endl;
+   			cout<<"Database folder already exists."<<endl;
 			ifstream ng_meta_file;
 			int nextID;
 			ng_meta_file.open(root_dir+"/meta");

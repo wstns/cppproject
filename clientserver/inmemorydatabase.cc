@@ -24,7 +24,7 @@ int InMemoryDatabase::removeNewsgroup(int id)
 
 const std::vector<Newsgroup> *InMemoryDatabase::getNewsgroups() const
 {
-    return &newsgroups;
+	return &newsgroups;
 }
 
 /* Returns -1 if name is not found. */
@@ -52,14 +52,14 @@ int InMemoryDatabase::addArticle(int ngID, const std::string &title, const std::
 
 int InMemoryDatabase::listArticles(int ngID, std::vector<std::pair<int ,Article>> &vec)
 {
-    auto it = std::find_if(newsgroups.begin(), newsgroups.end(), [ngID] (const Newsgroup &ng) { return ng.getID() == ngID; });
-    if (it == newsgroups.end())
-        return -1;
-
-    const std::map<int, Article> *articleMap = it->getArticles();
-    for (const std::pair<int, Article> &p : *articleMap)
-        vec.push_back(p);
-    return ngID;
+	auto it = std::find_if(newsgroups.begin(), newsgroups.end(), [ngID] (const Newsgroup &ng) { return ng.getID() == ngID; });
+	if (it == newsgroups.end())
+		return -1;
+	
+	const std::map<int, Article> *articleMap = it->getArticles();
+	for (const std::pair<int, Article> &p : *articleMap)
+		vec.push_back(p);
+	return ngID;
 }
 
 int InMemoryDatabase::deleteArticle(int ngID, int artID)

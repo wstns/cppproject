@@ -23,7 +23,8 @@ void printStartMessage(ostream &os)
 	"\t\"delete [number]\": Deletes the newsgroup with the given ID number.\n"
 	"\t\"createa [number] [newline] [title] [newline] [author] [newline] [text] $\": Creates and article in the newsgroup with the given ID.\n"
 	"\t\"deletea [number] [number]\": Deletes the article with the given ID (second number) in the given newsgroup (first number).\n"
-	"\t\"get [number] [number]\": Gets the article with the given ID (second number) in the given newsgroup (first number).\n" << endl;
+	"\t\"get [number] [number]\": Gets the article with the given ID (second number) in the given newsgroup (first number).\n" 
+	"\t\"quit\" : exits the client.\n"<< endl;
 }
 
 void listNewsgroups(MessageHandler &mess)
@@ -306,6 +307,8 @@ void handleInput(MessageHandler &mess)
 		}
 		else
 			cout << "Invalid input" << endl;
+	}else if (s == "quit"){	
+		exit(0);
 	}else
 		cout<<"Not a valid command"<<endl;
 

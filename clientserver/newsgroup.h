@@ -23,7 +23,6 @@ public:
   int removeArticle(int id);
   std::string getTitle() const { return title; }
   const std::map<int, Article> *getArticles() const { return &articles; }
-  int getAndIncrementNextArticleID();   //Denna liiger i filesystemdatabase. det e där den ska ligga tror jag.
   static void setNextNewsgroupID(int newNextID) {nextNewsgroupID = newNextID;}
 	int getID() const { return id; }
 	Article getArticle(int artID, int &check) const;

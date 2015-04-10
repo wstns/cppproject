@@ -243,7 +243,7 @@ void getArticle(MessageHandler &mess, int ngID, int artID)
 		if (code == Protocol::ERR_NG_DOES_NOT_EXIST)
 			cout << "Newsgroup with ID " << ngID << " does not exist." << endl;
 		else if (code == Protocol::ERR_ART_DOES_NOT_EXIST)
-			cout << "Article with ID " << artID << "in newsgroup with ID " << ngID << "does not exist." << endl;
+			cout << "Article with ID " << artID << " in newsgroup with ID " << ngID << " does not exist." << endl;
 		else
 		        util::error("Error: Invalid code received after ANS_NAK.");
 		break;

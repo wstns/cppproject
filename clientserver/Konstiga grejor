@@ -1,8 +1,5 @@
-*	om man försöker "geta" en artikel som inte finns säger den att Newsgroupen inte finns.
+
 *	Användarvänligheten e lite sådär...
 *	Fixa så att man vet vilken typ av server man skapar, typ ange val efter man startat servern eller ngt.ip
-*	id nr fixxa? börja på 1 för artiklar?
-*	ta reda på vilket nästa newsgroup ska ha i början.
-*	Myserver skickar addNewsgroup med en string som parameter men den tas emot som en newsgroup. därefter förs ng.getID(). förstår inte hur detta kna funka... Var kallas konstruktorn??
-* fixa så att grupper kan ha mellanrum i sig, och artiklar??
+
 * fixxa ej dublett av newsgroup i båda databaserna.

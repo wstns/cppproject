@@ -25,7 +25,7 @@ private:
 		int getAndIncrementNextArticleId(int ngID);
 		int findNewsgroup(int id);
 		std::vector<int> readDirectory(std::string dir_path);
-    std::vector<Newsgroup> newsgroups;
+    	std::vector<Newsgroup> newsgroups;
 		std::string root_dir;
 };
 

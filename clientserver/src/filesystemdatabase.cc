@@ -77,6 +77,7 @@ int FileSystemDatabase::removeNewsgroup(int id){
 vector<Newsgroup> FileSystemDatabase::listNewsgroups(){
 	vector<Newsgroup> ngs;
 	vector<int> ngIDs = readDirectory(root_dir);
+	sort(ngIDs.begin(), ngIDs.end());
 	ifstream meta_file;
 	string trash;
 	string title;

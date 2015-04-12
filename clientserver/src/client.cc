@@ -125,6 +125,7 @@ void createArticle(MessageHandler &mess, istream &is, int ngID)
         char ch;
 		while ((ch = is.get()) != '$')
 			text += ch;
+		is.get();	// Ignore the newline after the last character.
 	} else {
 		util::error("Error: Invalid format on create article command.");
 	}

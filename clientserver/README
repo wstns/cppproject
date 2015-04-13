@@ -8,3 +8,13 @@ CPP 2005 Project, Communication Classes
 - The subdirectory 'test' contains the test programs myclient and myserver,
   as defined in the project description, section 5.3.
 - 'make' makes the executables myclient and myserver.
+
+How to get a runnable program:
+  Open the terminal.
+  cd to this directory.
+  type "make all" in the terminal
+  type "make install"
+  type "cd bin"
+  start the server, then the client.
+  ???
+  Profit.
